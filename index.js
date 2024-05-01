@@ -34,13 +34,37 @@ app.post("/login",(req,res) => {
   })
 })
 
+app.post("/check-email", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const existingStudent = await StudentModel.findOne({ email: email });
+    if (existingStudent) {
+      res.json({ exists: true });
+    } else {
+      res.json({ exists: false });
+    }
+  } catch (error) {
+    console.error('Internal server error:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
-app.post('/register',(req,res) => {
-   StudentModel.create(req.body)
-   .then(student => res.json(student))
-   .catch(err => res.json(err))
-})
+app.post('/register', async (req, res) => {
+  try {
+    const existingStudent = await StudentModel.findOne({ email: req.body.email });
+    if (existingStudent) {
+      return res.status(400).json({ error: 'Email address is already registered' });
+    }
+
+    const newStudent = await StudentModel.create(req.body);
+    res.json({ message: 'Registration successful', student: newStudent });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 app.listen(3001, () => {
