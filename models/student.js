@@ -6,7 +6,7 @@ const StudentSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 60, // Assuming the hashed password length is 60 characters
+        // Assuming the hashed password length is 60 characters
       },
     contact: Number,
     year: String,
